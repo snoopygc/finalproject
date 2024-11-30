@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the Dog Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            text-align: center;
+            background-color: #fff7cc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #ce0067;
+            font-size: 2.5rem;
+        }
+        #game-container {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            background: #fff7cc;
+            border: 5px solid #ff85c0;
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .object {
+            width: 50px;
+            height: 50px;
+            background: #fff7cc;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 5px;
+            position: relative;
+        }
+        .dog {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/194/194279.png');
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+        }
+        #start-container {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 2px solid #ff85c0;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        button {
+            background: #ff69b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #ff4787;
+        }
+        #scoreboard {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            background: #ffecf5;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #fff7cc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Find the Dog Game 🐶</h1>
+    <div id="start-container">
+        <p>Enter your name:</p>
+        <input type="text" id="player-name" placeholder="Your Name">
+        <button id="start-btn">Start Game</button>
+    </div>
+    <div id="game-container" style="display: none;">
+        <p id="timer">Time: <span id="time">0.00</span>s</p>
+        <div id="objects-container"></div>
+    </div>
+    <div id="scoreboard" style="display: none;">
+        <p>Congratulations, <span id="player-display"></span>!</p>
+        <p>You found the dog in <span id="final-time"></span>s.</p>
+        <p>Your score: <span id="score"></span></p>
+        <button id="play-again-btn">Play Again</button>
+    </div>
+    <script>
+        const startBtn = document.getElementById('start-btn');
+        const gameContainer = document.getElementById('game-container');
+        const objectsContainer = document.getElementById('objects-container');
+        const playerNameInput = document.getElementById('player-name');
+        const scoreboard = document.getElementById('scoreboard');
+        const timerElement = document.getElementById('time');
+        const playerDisplay = document.getElementById('player-display');
+        const finalTime = document.getElementById('final-time');
+        const scoreDisplay = document.getElementById('score');
+        const playAgainBtn = document.getElementById('play-again-btn');
+
+        let timer = 0;
+        let timerInterval;
+        let playerName = "";
+
+        function startGame() {
+            playerName = playerNameInput.value || "Player";
+            playerDisplay.textContent = playerName;
+            gameContainer.style.display = "block";
+            scoreboard.style.display = "none";
+            objectsContainer.innerHTML = "";
+            timer = 0;
+            timerElement.textContent = timer.toFixed(2);
+
+            for (let i = 0; i < 25; i++) {
+                const object = document.createElement('div');
+                object.classList.add('object');
+                objectsContainer.appendChild(object);
+            }
+
+            const dogIndex = Math.floor(Math.random() * 25);
+            const dog = objectsContainer.children[dogIndex];
+            dog.classList.add('dog');
+            dog.addEventListener('click', endGame);
+
+            timerInterval = setInterval(() => {
+                timer += 0.01;
+                timerElement.textContent = timer.toFixed(2);
+            }, 10);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            const score = Math.max(1000 - Math.floor(timer * 100), 0);
+            finalTime.textContent = timer.toFixed(2);
+            scoreDisplay.textContent = score;
+
+            gameContainer.style.display = "none";
+            scoreboard.style.display = "block";
+        }
+
+        startBtn.addEventListener('click', startGame);
+        playAgainBtn.addEventListener('click', () => {
+            startGame();
+        });
+    </script>
+</body>
+</html>

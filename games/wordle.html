@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Wordle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffefd5;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff4500;
+        }
+
+        #start-screen,
+        #game-screen {
+            display: none;
+        }
+
+        #start-screen.active,
+        #game-screen.active {
+            display: block;
+        }
+
+        #game-container {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+        }
+
+        .tile {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            line-height: 50px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+        }
+
+        .tile.correct {
+            background-color: #32cd32;
+            color: white;
+        }
+
+        .tile.present {
+            background-color: #ffd700;
+            color: white;
+        }
+
+        .tile.absent {
+            background-color: #ccc;
+            color: white;
+        }
+
+        #keyboard {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 5px;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .key {
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #ff6347;
+            color: white;
+            cursor: pointer;
+        }
+
+        .key:active {
+            background-color: #e52b1f;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #ff4500;
+        }
+
+        .alert-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none;
+        }
+
+        .alert-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            animation: pop-in 0.3s ease-out;
+        }
+
+        .alert-box h2 {
+            color: #ff4500;
+        }
+
+        .alert-box p {
+            margin: 10px 0;
+        }
+
+        .alert-box button {
+            padding: 10px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .alert-box button:hover {
+            background-color: #e52b1f;
+        }
+
+        @keyframes pop-in {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* สไตล์สำหรับหน้าจอเริ่มเกม */
+        .input-container {
+            margin: 20px 0;
+        }
+
+        .input-container input {
+            padding: 10px;
+            font-size: 1.2rem;
+            border: 2px solid #ff6347;
+            border-radius: 5px;
+            outline: none;
+            width: 80%;
+            max-width: 250px;
+            margin-right: 10px;
+        }
+
+        .input-container button {
+            padding: 10px;
+            font-size: 1.2rem;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-container button:hover {
+            background-color: #e52b1f;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="start-screen" class="active">
+        <h1>Welcome to Dog Wordle</h1>
+        <div class="input-container">
+            <input type="text" id="player-name" placeholder="Enter your name" />
+            <button onclick="startGame()">Start Game</button>
+        </div>
+    </div>
+
+    <div id="game-screen">
+        <h1>Dog Wordle</h1>
+        <div id="game-container"></div>
+        <div id="keyboard"></div>
+        <div id="message"></div>
+    </div>
+
+    <div class="alert-container" id="alert-container">
+        <div class="alert-box">
+            <h2 id="alert-title"></h2>
+            <p id="alert-message"></p>
+            <button onclick="closeAlert()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // เลือกเฉพาะสายพันธุ์ที่มี 5 ตัวอักษร
+        const dogBreeds = ["LABRA", "BULLY", "CORGI", "HUSKY", "AKITA", "SHIBA", "BOXER"];
+        const targetWord = dogBreeds[Math.floor(Math.random() * dogBreeds.length)];
+        const maxGuesses = 6;
+        let currentRow = 0;
+        let currentTile = 0;
+        let gameOver = false;
+        let playerName = '';
+        let score = 0;
+
+        const gameContainer = document.getElementById('game-container');
+        const keyboard = document.getElementById('keyboard');
+        const messageDiv = document.getElementById('message');
+        const alertContainer = document.getElementById('alert-container');
+        const alertTitle = document.getElementById('alert-title');
+        const alertMessage = document.getElementById('alert-message');
+
+        function startGame() {
+            playerName = document.getElementById('player-name').value;
+            if (!playerName.trim()) {
+                alert('Please enter your name!');
+                return;
+            }
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            setupGame();
+        }
+
+        function setupGame() {
+            // Create game grid
+            for (let i = 0; i < maxGuesses; i++) {
+                const row = document.createElement('div');
+                row.classList.add('row');
+                for (let j = 0; j < 5; j++) {
+                    const tile = document.createElement('div');
+                    tile.classList.add('tile');
+                    row.appendChild(tile);
+                }
+                gameContainer.appendChild(row);
+            }
+
+            // Create keyboard
+            const keys = "QWERTYUIOPASDFGHJKLZXCVBNM".split('');
+            keys.push("ENTER", "DEL");
+            keys.forEach((key) => {
+                const keyButton = document.createElement('div');
+                keyButton.classList.add('key');
+                keyButton.textContent = key;
+                keyButton.onclick = () => handleKeyPress(key);
+                keyboard.appendChild(keyButton);
+            });
+        }
+
+        function handleKeyPress(key) {
+            if (gameOver) return;
+
+            const rows = document.querySelectorAll('.row');
+            const currentRowEl = rows[currentRow];
+
+            if (key === "ENTER") {
+                submitGuess(currentRowEl);
+            } else if (key === "DEL") {
+                deleteLetter(currentRowEl);
+            } else if (/^[A-Z]$/.test(key)) {
+                addLetter(currentRowEl, key);
+            }
+        }
+
+        function addLetter(row, letter) {
+            if (currentTile < 5) {
+                const tile = row.children[currentTile];
+                tile.textContent = letter;
+                currentTile++;
+            }
+        }
+
+        function deleteLetter(row) {
+            if (currentTile > 0) {
+                currentTile--;
+                const tile = row.children[currentTile];
+                tile.textContent = "";
+            }
+        }
+
+        function submitGuess(row) {
+            if (currentTile < 5) {
+                showMessage("Not enough letters!");
+                return;
+            }
+
+            const guess = Array.from(row.children).map(tile => tile.textContent).join('');
+            if (!dogBreeds.includes(guess)) {
+                showMessage("Invalid breed!");
+                return;
+            }
+
+            checkGuess(row, guess);
+
+            if (guess === targetWord) {
+                score = 50;
+                showAlert("Congratulations!", `You guessed it, ${playerName}! Your score: ${score}`);
+                gameOver = true;
+                setTimeout(() => resetGame(), 2000);
+            } else if (currentRow === maxGuesses - 1) {
+                score = 0;
+                showAlert("Game Over", `Sorry, ${playerName}. The word was ${targetWord}. Your score: ${score}`);
+                gameOver = true;
+                setTimeout(() => resetGame(), 2000);
+            } else {
+                currentRow++;
+                currentTile = 0;
+            }
+        }
+
+        function checkGuess(row, guess) {
+            const guessArray = guess.split('');
+            const targetArray = targetWord.split('');
+
+            // Check for correct and present letters
+            guessArray.forEach((letter, index) => {
+                const tile = row.children[index];
+                if (letter === targetArray[index]) {
+                    tile.classList.add('correct');
+                    targetArray[index] = null; // Prevent duplicate matching
+                } else if (targetArray.includes(letter)) {
+                    tile.classList.add('present');
+                    targetArray[targetArray.indexOf(letter)] = null; // Prevent duplicate matching
+                } else {
+                    tile.classList.add('absent');
+                }
+            });
+        }
+
+        function showMessage(message) {
+            messageDiv.textContent = message;
+            setTimeout(() => (messageDiv.textContent = ""), 2000);
+        }
+
+        function showAlert(title, message) {
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+            alertContainer.style.display = 'flex';
+        }
+
+        function closeAlert() {
+            alertContainer.style.display = 'none';
+            document.getElementById('start-screen').classList.add('active');
+            document.getElementById('game-screen').classList.remove('active');
+        }
+
+        function resetGame() {
+            currentRow = 0;
+            currentTile = 0;
+            gameOver = false;
+            document.getElementById('game-container').innerHTML = '';
+            document.getElementById('keyboard').innerHTML = '';
+            setupGame();
+        }
+    </script>
+</body>
+
+</html>

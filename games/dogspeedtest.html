@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background-color: #f6ffb0;
+            color: #2d6a4f;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #ff9e00;
+        }
+
+        label {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"] {
+            font-size: 1rem;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ffcb77;
+            border-radius: 10px;
+            width: calc(100% - 20px); /* ลดขนาด width เพื่อให้มีระยะห่างซ้ายขวา */
+            margin-left: auto;
+            margin-right: auto;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #ffd60a;
+            color: #6a4c93;
+            border: none;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff9e00;
+            color: #fff;
+        }
+
+        #gameArea {
+            margin-top: 20px;
+        }
+
+        #wordToType {
+            font-size: 1.5rem;
+            color: #1b4332;
+            margin-bottom: 10px;
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            color: #e63946;
+        }
+
+        #finalScore {
+            font-size: 1.5rem;
+            color: #06d6a0;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Typing Speed Test 🐾</h1>
+        <div class="input-section">
+            <label for="playerName">Enter your name:</label>
+            <input type="text" id="playerName" placeholder="Your Name" />
+            <button id="startGame">Start Game</button>
+        </div>
+        <div id="gameArea" class="hidden">
+            <p id="wordToType">Click Start to Begin!</p>
+            <input type="text" id="typingInput" placeholder="Type here..." disabled />
+            <p id="timer">Time: 0.00s</p>
+        </div>
+        <p id="finalScore" class="hidden"></p>
+    </div>
+    <script>
+        const breeds = ["Beagle", "Bulldog", "Golden Retriever", "Poodle", "Shih Tzu", "Husky", "Dachshund"];
+        const playerNameInput = document.getElementById("playerName");
+        const startButton = document.getElementById("startGame");
+        const gameArea = document.getElementById("gameArea");
+        const wordToType = document.getElementById("wordToType");
+        const typingInput = document.getElementById("typingInput");
+        const timerDisplay = document.getElementById("timer");
+        const finalScore = document.getElementById("finalScore");
+
+        let timer = 0;
+        let timerInterval;
+        let currentWord;
+        let score;
+
+        startButton.addEventListener("click", () => {
+            const playerName = playerNameInput.value.trim();
+            if (playerName === "") {
+                alert("Please enter your name to start!");
+                return;
+            }
+            startGame(playerName);
+        });
+
+        function startGame(playerName) {
+            playerNameInput.disabled = true;
+            startButton.disabled = true;
+            gameArea.classList.remove("hidden");
+            typingInput.disabled = false;
+            typingInput.focus();
+            finalScore.classList.add("hidden");
+            score = 0;
+            timer = 0;
+            nextWord();
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer += 0.01;
+                timerDisplay.textContent = `Time: ${timer.toFixed(2)}s`;
+            }, 10);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function nextWord() {
+            currentWord = breeds[Math.floor(Math.random() * breeds.length)];
+            wordToType.textContent = currentWord;
+            typingInput.value = "";
+        }
+
+        typingInput.addEventListener("input", () => {
+            if (typingInput.value.trim() === currentWord) {
+                score += Math.max(10 - timer, 1); // Faster typing = higher score
+                nextWord();
+            }
+        });
+
+        function endGame(playerName) {
+            stopTimer();
+            typingInput.disabled = true;
+            finalScore.textContent = `${playerName}, your final score is: ${score.toFixed(2)}`;
+            finalScore.classList.remove("hidden");
+            resetGame();
+        }
+
+        function resetGame() {
+            playerNameInput.disabled = false;
+            startButton.disabled = false;
+            gameArea.classList.add("hidden");
+            wordToType.textContent = "Click Start to Begin!";
+            typingInput.value = "";
+            timerDisplay.textContent = "Time: 0.00s";
+        }
+
+        // Simulate ending the game after a word count (optional)
+        setInterval(() => {
+            if (gameArea.classList.contains("hidden")) return;
+            if (timer >= 30) endGame(playerNameInput.value);
+        }, 100);
+    </script>
+</body>
+</html>
