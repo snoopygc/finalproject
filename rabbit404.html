@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
+    <title>404 Not Found</title>
+    <style>
+        /* General reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Slackey', cursive;
+            background-color: #f0f9ff;
+            /* Soft blue */
+            color: #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            /* Larger width */
+            height: 700px;
+            /* Larger height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .header {
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Slackey', cursive;
+            font-size: 4em;
+            color: #ff6f61;
+            /* Soft coral */
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-family: 'Slackey', cursive;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4caf50;
+            /* Soft green */
+            font-family: 'Slackey', cursive;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .gif {
+            flex-grow: 1;
+            width: 100%;
+            /* Ensure GIF fits the container width */
+            object-fit: cover;
+            /* Makes GIF fill the container without stretching */
+        }
+
+        /* Falling carrot animation */
+        .carrot {
+            position: absolute;
+            font-size: 5rem;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Falling carrots background -->
+    <div id="fallingCarrots"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>404</h1>
+            <p>SORRY the rabbit has been busy with the mission :-P</p>
+            <button id="goBack">Go Back</button>
+        </div>
+        <!-- Ensure the 'whiterabbit.gif' is in the same directory as this file -->
+        <img src="./img/whiterabbit.gif" alt="404 Rabbit Theme" class="gif">
+    </div>
+
+    <script>
+        // Go Back button functionality
+        document.getElementById('goBack').addEventListener('click', () => {
+            window.history.back(); // Navigate to the previous page
+        });
+
+        // Create falling carrots animation
+        const fallingCarrots = document.getElementById('fallingCarrots');
+
+        function createCarrot() {
+            const carrot = document.createElement('div');
+            carrot.classList.add('carrot');
+            carrot.style.left = Math.random() * 100 + 'vw';
+            carrot.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random duration between 2-5 seconds
+            carrot.textContent = '🥕';
+            fallingCarrots.appendChild(carrot);
+
+            // Remove carrot after animation ends
+            setTimeout(() => {
+                carrot.remove();
+            }, 5000);
+        }
+
+        // Generate carrots every 300ms
+        setInterval(createCarrot, 300);
+    </script>
+</body>
+
+</html>

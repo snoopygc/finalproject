@@ -5,28 +5,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doggo Crossword</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rock+Salt&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Raleway', sans-serif;
             background-color: #f9f5f1;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
             margin: 0;
             color: #333;
+            justify-content: center;
+        }
+
+        .header {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            transition: top 0.5s ease;
+            /* เพิ่ม Transition เพื่อให้หัวข้อเกมเลื่อนไป */
+        }
+
+        .header.start-game {
+            top: 20px;
+            /* ย้ายขึ้นไปใกล้ขอบบน */
+            transform: translate(-50%, 0);
+            /* เปลี่ยนตำแหน่งแนวตั้ง */
         }
 
         h1 {
-            font-family: 'Rock Salt', cursive;
-            color: #ff6347;
+            font-family: "Slackey", cursive;
+            font-weight: 400;
             font-size: 3rem;
+            color: #ff6347;
             margin-bottom: 20px;
         }
 
+        form {
+            margin-top: 15px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: "Slackey", cursive;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: "Slackey", cursive;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         .container {
-            display: flex;
+            display: none;
+            flex-direction: row;
             justify-content: space-between;
             align-items: flex-start;
             max-width: 900px;
@@ -101,10 +151,15 @@
 </head>
 
 <body>
+    <div class="header">
+        <h1>Doggo Crossword</h1>
+        <form id="playerForm" onsubmit="startGame(event)">
+            <input type="text" id="playerName" placeholder="Enter your name" required>
+            <button type="submit">Start Game</button>
+        </form>
+    </div>
 
-    <h1>Doggo Crossword</h1>
-
-    <div class="container">
+    <div class="container" id="gameContainer">
         <div class="crossword-container" id="crosswordGrid"></div>
 
         <div class="side-panel">
@@ -116,151 +171,165 @@
     </div>
 
     <script>
-        const words = ['LABRADOR', 'BEAGLE', 'POODLE', 'BULLDOG', 'GERMAN', 'DALMATIAN', 'POMERANIAN', 'CHIHUAHUA', 'HUSKY'];
-        let score = 0;
-        let selectedCells = [];
-        let startTime, timerInterval;
+        function startGame(event) {
+            event.preventDefault();
+            const playerName = document.getElementById('playerName').value;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            generateCrossword();
-            startTimer();
-        });
+            // เพิ่มคลาสเพื่อย้ายชื่อเกมขึ้นไป
+            document.querySelector('.header').classList.add('start-game');
 
-        function startTimer() {
-            const timerDisplay = document.getElementById('timer');
-            startTime = Date.now();
-            timerInterval = setInterval(() => {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
-                const seconds = String(elapsed % 60).padStart(2, '0');
-                timerDisplay.textContent = `Time: ${minutes}:${seconds}`;
-            }, 1000);
-        }
+            const words = ['LABRADOR', 'BEAGLE', 'POODLE', 'BULLDOG', 'GERMAN', 'DALMATIAN', 'POMERANIAN', 'CHIHUAHUA', 'HUSKY'];
+            let score = 0;
+            let selectedCells = [];
+            let startTime, timerInterval;
 
-        function generateCrossword() {
-            const grid = document.getElementById('crosswordGrid');
-            const wordList = document.getElementById('wordList');
-
-            // Clear existing content
-            grid.innerHTML = '';
-            wordList.innerHTML = '';
-
-            // Create grid
-            for (let i = 0; i < 12 * 12; i++) {
-                const cell = document.createElement('div');
-                cell.classList.add('crossword-cell');
-                cell.addEventListener('mousedown', () => selectCell(cell));
-                cell.addEventListener('mouseover', () => highlightCell(cell));
-                cell.addEventListener('mouseup', checkWord);
-                grid.appendChild(cell);
+            function startGame(event) {
+                event.preventDefault();
+                const playerName = document.getElementById('playerName').value;
+                alert(`Welcome, ${playerName}! Let's play!`);
+                document.getElementById('playerForm').style.display = 'none';
+                document.getElementById('gameContainer').style.display = 'flex';
+                generateCrossword();
+                startTimer();
             }
 
-            // Place words
-            words.forEach(word => {
-                placeWord(word);
-                const li = document.createElement('li');
-                li.textContent = word;
-                wordList.appendChild(li);
-            });
+            function startTimer() {
+                const timerDisplay = document.getElementById('timer');
+                startTime = Date.now();
+                timerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                    const seconds = String(elapsed % 60).padStart(2, '0');
+                    timerDisplay.textContent = `Time: ${minutes}:${seconds}`;
+                }, 1000);
+            }
 
-            // Fill empty cells
-            fillEmptyCells();
-        }
+            function generateCrossword() {
+                const grid = document.getElementById('crosswordGrid');
+                const wordList = document.getElementById('wordList');
 
-        function selectCell(cell) {
-            selectedCells = [cell];
-            cell.classList.add('highlighted');
-        }
+                grid.innerHTML = '';
+                wordList.innerHTML = '';
 
-        function highlightCell(cell) {
-            if (selectedCells.length > 0) {
-                selectedCells.push(cell);
+                for (let i = 0; i < 12 * 12; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('crossword-cell');
+                    cell.addEventListener('mousedown', () => selectCell(cell));
+                    cell.addEventListener('mouseover', () => highlightCell(cell));
+                    cell.addEventListener('mouseup', checkWord);
+                    grid.appendChild(cell);
+                }
+
+                words.forEach(word => {
+                    placeWord(word);
+                    const li = document.createElement('li');
+                    li.textContent = word;
+                    wordList.appendChild(li);
+                });
+
+                fillEmptyCells();
+            }
+
+            function selectCell(cell) {
+                selectedCells = [cell];
                 cell.classList.add('highlighted');
             }
-        }
 
-        function checkWord() {
-            const selectedWord = selectedCells.map(c => c.textContent).join('');
-            const reversedWord = selectedWord.split('').reverse().join('');
+            function highlightCell(cell) {
+                if (selectedCells.length > 0) {
+                    selectedCells.push(cell);
+                    cell.classList.add('highlighted');
+                }
+            }
 
-            if (words.includes(selectedWord) || words.includes(reversedWord)) {
-                selectedCells.forEach(cell => cell.classList.add('found'));
-                const wordListItems = document.querySelectorAll('.word-list li');
-                wordListItems.forEach(li => {
-                    if (li.textContent === selectedWord || li.textContent === reversedWord) {
-                        li.classList.add('found');
+            function checkWord() {
+                const selectedWord = selectedCells.map(c => c.textContent).join('');
+                const reversedWord = selectedWord.split('').reverse().join('');
+
+                if (words.includes(selectedWord) || words.includes(reversedWord)) {
+                    selectedCells.forEach(cell => cell.classList.add('found'));
+                    const wordListItems = document.querySelectorAll('.word-list li');
+                    wordListItems.forEach(li => {
+                        if (li.textContent === selectedWord || li.textContent === reversedWord) {
+                            li.classList.add('found');
+                        }
+                    });
+                    score += 100;
+                    updateScore();
+                }
+
+                selectedCells.forEach(cell => cell.classList.remove('highlighted'));
+                selectedCells = [];
+                checkWinCondition();
+            }
+
+            function updateScore() {
+                document.getElementById('score').textContent = `Score: ${score}`;
+            }
+
+            function checkWinCondition() {
+                const foundWords = document.querySelectorAll('.word-list li.found');
+                if (foundWords.length === words.length) {
+                    clearInterval(timerInterval);
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    if (elapsed <= 120) {
+                        score += 50;
+                    }
+                    alert(`Congratulations! Final Score: ${score}`);
+                }
+            }
+
+            function placeWord(word) {
+                const grid = document.getElementById('crosswordGrid');
+                const gridSize = 12;
+                const directions = [[1, 0], [0, 1]];
+
+                let placed = false;
+                while (!placed) {
+                    const startX = Math.floor(Math.random() * gridSize);
+                    const startY = Math.floor(Math.random() * gridSize);
+                    const direction = directions[Math.floor(Math.random() * directions.length)];
+                    if (canPlaceWord(word, startX, startY, direction)) {
+                        for (let i = 0; i < word.length; i++) {
+                            const x = startX + i * direction[0];
+                            const y = startY + i * direction[1];
+                            const cell = grid.children[y * gridSize + x];
+                            cell.textContent = word[i];
+                        }
+                        placed = true;
+                    }
+                }
+            }
+
+            function canPlaceWord(word, startX, startY, direction) {
+                const gridSize = 12;
+                for (let i = 0; i < word.length; i++) {
+                    const x = startX + i * direction[0];
+                    const y = startY + i * direction[1];
+                    if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) return false;
+                    const cell = document.getElementById('crosswordGrid').children[y * gridSize + x];
+                    if (cell.textContent && cell.textContent !== word[i]) return false;
+                }
+                return true;
+            }
+
+            function fillEmptyCells() {
+                const cells = document.querySelectorAll('.crossword-cell');
+                cells.forEach(cell => {
+                    if (!cell.textContent) {
+                        cell.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26));
                     }
                 });
-                score += 100;
-                updateScore();
             }
+            document.getElementById('playerForm').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'flex';
 
-            // Clear highlight
-            selectedCells.forEach(cell => cell.classList.remove('highlighted'));
-            selectedCells = [];
-            checkWinCondition();
-        }
+            alert(`Welcome, ${playerName}! Let's play!`);
 
-        function updateScore() {
-            document.getElementById('score').textContent = `Score: ${score}`;
-        }
-
-        function checkWinCondition() {
-            const foundWords = document.querySelectorAll('.word-list li.found');
-            if (foundWords.length === words.length) {
-                clearInterval(timerInterval);
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                if (elapsed <= 120) {
-                    score += 50;
-                }
-                alert(`Congratulations! Final Score: ${score}`);
-            }
-        }
-
-        function placeWord(word) {
-            const grid = document.getElementById('crosswordGrid');
-            const gridSize = 12;
-            const directions = [[1, 0], [0, 1]]; // Horizontal, Vertical
-
-            let placed = false;
-            while (!placed) {
-                const startX = Math.floor(Math.random() * gridSize);
-                const startY = Math.floor(Math.random() * gridSize);
-                const direction = directions[Math.floor(Math.random() * directions.length)];
-                if (canPlaceWord(word, startX, startY, direction)) {
-                    for (let i = 0; i < word.length; i++) {
-                        const x = startX + i * direction[0];
-                        const y = startY + i * direction[1];
-                        const cell = grid.children[y * gridSize + x];
-                        cell.textContent = word[i];
-                    }
-                    placed = true;
-                }
-            }
-        }
-
-        function canPlaceWord(word, startX, startY, direction) {
-            const gridSize = 12;
-            for (let i = 0; i < word.length; i++) {
-                const x = startX + i * direction[0];
-                const y = startY + i * direction[1];
-                if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) return false;
-                const cell = document.getElementById('crosswordGrid').children[y * gridSize + x];
-                if (cell.textContent && cell.textContent !== word[i]) return false;
-            }
-            return true;
-        }
-
-        function fillEmptyCells() {
-            const cells = document.querySelectorAll('.crossword-cell');
-            cells.forEach(cell => {
-                if (!cell.textContent) {
-                    cell.textContent = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-                }
-            });
+            generateCrossword();
+            startTimer();
         }
     </script>
-
 </body>
 
 </html>

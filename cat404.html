@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Slackey', cursive;
+            background: #fff4d1; /* Outer background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 900px;
+            padding: 20px 30px;
+            border: 5px solid #FF7F50;
+            border-radius: 10px;
+            background: #FFE99D; /* Inner container background color */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10; /* Ensures container stays on top */
+        }
+
+        h1 {
+            font-size: 5rem;
+            margin: 0.5rem 0;
+            color: #FF7F50;
+        }
+
+        .lost-text {
+            font-size: 3rem;
+            color: #FF6347;
+            margin: 0;
+        }
+
+        .cat-gif {
+            width: 250px;
+            height: auto;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            color: #666;
+        }
+
+        .tags {
+            font-size: 1rem;
+            margin: 1rem 0;
+            color: #333;
+            text-align: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            font-size: 1.2rem;
+            font-family: 'Slackey', cursive; /* Ensuring the font matches */
+            color: white;
+            background-color: #FF7F50;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .back-btn:hover {
+            background-color: #FF6347;
+        }
+
+        .tear-offs {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .tear-off {
+            font-size: 2rem;
+            color: #FF6347;
+            padding: 10px 20px;
+            margin: 0 5px;
+            background: #FFE99D;
+            border: 2px dashed #FF6347;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: rotate(0deg);
+            transition: transform 0.2s ease;
+        }
+
+        .tear-off:hover {
+            transform: rotate(10deg);
+        }
+
+        .tear-off:active {
+            transform: rotate(-5deg);
+        }
+
+        /* Falling fish animation */
+        .fish {
+            position: absolute;
+            font-size: 5rem;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Falling fish emojis background -->
+    <div id="fallingFish"></div>
+
+    <div class="container">
+        <p class="lost-text">CAT LOST !</p>
+        <p>Oops! The page you're looking for is lost in catnip.</p>
+        <img src="./img/catsit.gif" alt="Cute Cat Animation" class="cat-gif">
+        <div class="tags">
+            <p>Name: Jimmy</p>
+            <p>Color: #414141</p>
+            <p>Call anytime. Ask for Grace.</p>
+        </div>
+        <button class="back-btn" onclick="goBack()">Go Back</button>
+        <div class="tear-offs">
+            <div class="tear-off">404</div>
+            <div class="tear-off">CAT</div>
+            <div class="tear-off">NOT</div>
+            <div class="tear-off">FOUND</div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        // Create falling fish animation
+        const fallingFish = document.getElementById('fallingFish');
+
+        function createFish() {
+            const fish = document.createElement('div');
+            fish.classList.add('fish');
+            fish.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+            fish.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random duration between 2-5 seconds
+            fish.textContent = '🐟'; // Fish emoji
+            fallingFish.appendChild(fish);
+
+            // Remove fish after animation ends
+            setTimeout(() => {
+                fish.remove();
+            }, 5000);
+        }
+
+        // Generate fish every 400ms
+        setInterval(createFish, 400);
+    </script>
+</body>
+</html>
