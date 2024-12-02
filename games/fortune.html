@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,12 +25,13 @@
             align-items: center;
             min-height: 100vh;
             background-image: linear-gradient(to bottom right, #FFF3E0, #FFE0B2);
+            overflow: hidden;
         }
 
         .temple-container {
             background-color: #FFFFFF;
             border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
             padding: 30px;
             text-align: center;
             max-width: 700px;
@@ -40,7 +42,7 @@
             font-size: 2.5rem;
             color: var(--primary-red);
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .fortune-container {
@@ -62,7 +64,7 @@
             align-items: center;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             cursor: pointer;
         }
 
@@ -95,7 +97,7 @@
             transform: translateX(-50%);
             color: white;
             font-weight: bold;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             padding: 2px 5px;
             border-radius: 3px;
         }
@@ -103,7 +105,7 @@
         .fortune-result {
             margin-top: 20px;
             padding: 15px;
-            background-color: rgba(255,255,255,0.8);
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             min-height: 100px;
             display: flex;
@@ -120,7 +122,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             justify-content: center;
             align-items: center;
@@ -134,7 +136,7 @@
             text-align: center;
             max-width: 80%;
             width: 400px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             position: relative;
             transform: scale(0.7);
             opacity: 0;
@@ -161,23 +163,61 @@
         }
 
         @keyframes shake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            50% { transform: rotate(10deg); }
-            75% { transform: rotate(-5deg); }
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            50% {
+                transform: rotate(10deg);
+            }
+
+            75% {
+                transform: rotate(-5deg);
+            }
         }
 
         @keyframes popUp {
-            0% { transform: translateY(100%); }
-            70% { transform: translateY(-10%); }
-            100% { transform: translateY(0); }
+            0% {
+                transform: translateY(100%);
+            }
+
+            70% {
+                transform: translateY(-10%);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
         }
+
+        /* .dog {
+            position: absolute;
+            font-size: 5rem;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        } */
     </style>
 </head>
+
 <body>
     <div class="temple-container">
         <h1 class="temple-title">🎋 Activities Baby KIKI 🎋</h1>
-        
+
         <div class="fortune-container">
             <div id="lotteryCase" class="lottery-case">
                 <!-- Lottery Sticks -->
@@ -195,7 +235,7 @@
         </div>
 
         <div id="fortuneResult" class="fortune-result">
-            click click to see activities with ur good boi / good gurl
+            Click to see activities with your good boi/gurl
         </div>
     </div>
 
@@ -206,7 +246,11 @@
         </div>
     </div>
 
+    <!-- Falling emojis background
+    <div id="fallingDogs"></div> -->
+
     <script>
+        
         const lotteryCase = document.getElementById('lotteryCase');
         const fortuneResult = document.getElementById('fortuneResult');
         const lotterySticks = document.querySelectorAll('.lottery-stick');
@@ -215,15 +259,15 @@
 
         const fortunes = {
             1: "🦮 RUN-RUN-RUN 💨",
-            2: "walking them in different place 🐩",
-            3: "some EXTRA treats ! 🍵",
-            4: "🐶 play HIDE and SEEK tgt (yayyy)",
-            5: "time for new ToYssssssss 🧸",
-            6: "🤿 swimming (boong-boong🫧)",
-            7: "🐕‍🦺 DOgGY photoshoot 🤳🏼",
-            8: "🦴 teach TRICKs!",
-            9: "doggo playDATES 💋🐾",
-            10: "it's time to the VET (😿)🩻"
+            2: "Walking them in different places 🐩",
+            3: "Some EXTRA treats! 🍵",
+            4: "🐶 Play HIDE and SEEK together (yayyy)",
+            5: "Time for new ToYssssssss 🧸",
+            6: "🤿 Swimming (boong-boong🫧)",
+            7: "🐕‍🦺 Doggy photoshoot 🤳🏼",
+            8: "🦴 Teach TRICKS!",
+            9: "Doggo playDATES 💋🐾",
+            10: "It's time to go to the VET (😿)🩻"
         };
 
         function showAlert(message) {
@@ -231,7 +275,7 @@
             customAlert.style.display = 'flex';
             setTimeout(() => {
                 customAlert.querySelector('.alert-box').classList.add('show');
-            }, 10);
+            }, 50);
         }
 
         function closeAlert() {
@@ -241,16 +285,14 @@
             }, 300);
         }
 
-        lotteryCase.addEventListener('click', () => {
-            // Reset previous state
-            lotterySticks.forEach(stick => {
-                stick.style.display = 'none';
-                stick.style.transform = 'translateY(100%)';
-            });
+        lotteryCase.addEventListener('click', function () {
+            fortuneResult.innerHTML = 'Fortune unfolding...';
+            lotterySticks.forEach(stick => stick.style.display = 'none');
 
             // Shake animation
             lotteryCase.style.animation = 'shake 0.5s ease';
 
+            // Animation delay
             setTimeout(() => {
                 lotteryCase.style.animation = '';
 
@@ -271,6 +313,26 @@
                 showAlert(`<h2>activity nooo ${stickNumber}</h2><p>${fortuneMessage}</p>`);
             }, 500);
         });
+
+        // // Create falling emojis for the background
+        // const fallingDogs = document.getElementById('fallingDogs');
+
+        // function createDog() {
+        //     const dog = document.createElement('div');
+        //     dog.classList.add('fish');
+        //     dog.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+        //     dog.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random duration between 2-5 seconds
+        //     dog.textContent = '🐟'; 
+        //     fallingDog.appendChild(dog);
+
+        //     setTimeout(() => {
+        //         dog.remove();
+        //     }, 5000);
+        // }
+
+        // setInterval(createDogs, 400);
+        
     </script>
 </body>
+
 </html>

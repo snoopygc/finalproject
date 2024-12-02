@@ -11,65 +11,66 @@
     <style>
         body {
             font-family: 'Raleway', sans-serif;
-            background-color: #f9f5f1;
+            background-color: #508b9e;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             color: #333;
+        }
+
+        /* The overall container for the header and form */
+        .header-container {
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-        }
-
-        .header {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            align-items: center;
             text-align: center;
-            transition: top 0.5s ease;
-            /* เพิ่ม Transition เพื่อให้หัวข้อเกมเลื่อนไป */
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 80%; /* Can adjust for different screen sizes */
+            max-width: 500px;
         }
 
-        .header.start-game {
-            top: 20px;
-            /* ย้ายขึ้นไปใกล้ขอบบน */
-            transform: translate(-50%, 0);
-            /* เปลี่ยนตำแหน่งแนวตั้ง */
-        }
-
-        h1 {
+        .header-container h1 {
             font-family: "Slackey", cursive;
             font-weight: 400;
             font-size: 3rem;
-            color: #ff6347;
+            color: #F96E2A;
             margin-bottom: 20px;
+            margin-top: 10px;
         }
 
-        form {
-            margin-top: 15px;
-        }
-
+        /* Input and Button styling */
         input[type="text"] {
             padding: 10px;
             font-size: 1rem;
             border: 2px solid #ddd;
             border-radius: 5px;
             font-family: "Slackey", cursive;
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         button {
             padding: 10px 20px;
             font-size: 1rem;
             color: white;
-            background-color: #007bff;
+            background-color: #78B3CE;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
             font-family: "Slackey", cursive;
+            margin-top: 10px;
         }
-
+        
         button:hover {
             background-color: #0056b3;
         }
@@ -151,14 +152,16 @@
 </head>
 
 <body>
-    <div class="header">
+    <!-- Main container to hold the game title and form -->
+    <div class="header-container">
         <h1>Doggo Crossword</h1>
         <form id="playerForm" onsubmit="startGame(event)">
-            <input type="text" id="playerName" placeholder="Enter your name" required>
+            <input type="text" id="playerName" placeholder="Enter Your Name" required>
             <button type="submit">Start Game</button>
         </form>
     </div>
 
+    <!-- This is where the game content will go after starting -->
     <div class="container" id="gameContainer">
         <div class="crossword-container" id="crosswordGrid"></div>
 
@@ -175,23 +178,14 @@
             event.preventDefault();
             const playerName = document.getElementById('playerName').value;
 
-            // เพิ่มคลาสเพื่อย้ายชื่อเกมขึ้นไป
-            document.querySelector('.header').classList.add('start-game');
+            // Move the title up when the game starts
+            document.querySelector('.header-container').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'flex';
 
             const words = ['LABRADOR', 'BEAGLE', 'POODLE', 'BULLDOG', 'GERMAN', 'DALMATIAN', 'POMERANIAN', 'CHIHUAHUA', 'HUSKY'];
             let score = 0;
             let selectedCells = [];
             let startTime, timerInterval;
-
-            function startGame(event) {
-                event.preventDefault();
-                const playerName = document.getElementById('playerName').value;
-                alert(`Welcome, ${playerName}! Let's play!`);
-                document.getElementById('playerForm').style.display = 'none';
-                document.getElementById('gameContainer').style.display = 'flex';
-                generateCrossword();
-                startTimer();
-            }
 
             function startTimer() {
                 const timerDisplay = document.getElementById('timer');
@@ -321,10 +315,6 @@
                     }
                 });
             }
-            document.getElementById('playerForm').style.display = 'none';
-            document.getElementById('gameContainer').style.display = 'flex';
-
-            alert(`Welcome, ${playerName}! Let's play!`);
 
             generateCrossword();
             startTimer();

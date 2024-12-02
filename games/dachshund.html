@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dachshund Game</title>
+    <title>Dachshund Snake</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f3f4ed;
+            background-color: #763e06;
             font-family: 'Slackey', cursive;
             overflow: hidden;
         }
@@ -80,7 +80,7 @@
             width: 400px;
             height: 400px;
             background-color: #c5e3f6;
-            border: 5px solid #333;
+            border: 5px solid #d4a373;
             display: none;
             align-items: center;
             justify-content: center;
@@ -120,7 +120,7 @@
 
 <body>
     <div class="name-entry">
-        <h1 class="game-title">Dachshund Game</h1>
+        <h1 class="game-title">Dachshund Snake</h1>
         <input type="text" id="playerName" class="name-input" placeholder="Enter Your Name" maxlength="15">
         <button id="startButton" class="start-btn">Start Game</button>
     </div>
@@ -202,7 +202,7 @@
 
                 Swal.fire({
                     title: '🎉 Yay! 🎉',
-                    text: 'The Dachshund is full and happy! Score: 100 points!',
+                    text: 'The Dachshund is full and happy! ur score = 100 points!',
                     icon: 'success',
                     confirmButtonText: 'Play Again ?',
                     background: '#f3f4ed',
