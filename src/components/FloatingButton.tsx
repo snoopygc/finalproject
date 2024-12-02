@@ -1,29 +1,42 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
+import { useState } from 'react';
+import Link from 'next/link';
+import styles from './FloatingButton.module.css';
 
 const FloatingButton = () => {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <div className="fixed bottom-4 right-4">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center"
-            >
-                {isOpen ? 'X' : '🐾'}
-            </button>
-            {isOpen && (
-                <div className="absolute bottom-14 right-0 bg-white p-2 rounded shadow">
-                    <Link href="/breeds/small" className="block p-2 hover:bg-gray-100">Small Dogs</Link>
-                    <Link href="/breeds/medium" className="block p-2 hover:bg-gray-100">Medium Dogs</Link>
-                    <Link href="/breeds/large" className="block p-2 hover:bg-gray-100">Large Dogs</Link>
-                </div>
-            )}
+        <div
+            className={styles.floatingContainer}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <div className={styles.floatingButton}>+</div>
+            <div className={`${styles.elementContainer} ${isHovered ? styles.showElements : ''}`}>
+                <Link href="/breeds/small" className={`${styles.floatElementWrapper} ${styles.wrapper1}`}>
+                    <span className={`${styles.floatElement} ${styles.element1}`}>
+                        🦴
+                    </span>
+                    <div className={styles.floatElementText}>Small Breeds</div>
+                </Link>
+                <Link href="/breeds/medium" className={`${styles.floatElementWrapper} ${styles.wrapper2}`}>
+                    <span className={`${styles.floatElement} ${styles.element2}`}>
+                        🐶
+                    </span>
+                    <div className={styles.floatElementText}>Medium Breeds</div>
+                </Link>
+                <Link href="/breeds/large" className={`${styles.floatElementWrapper} ${styles.wrapper3}`}>
+                    <span className={`${styles.floatElement} ${styles.element3}`}>
+                        🦮
+                    </span>
+                    <div className={styles.floatElementText}>Big Breeds</div>
+                </Link>
+            </div>
         </div>
-    )
-}
 
-export default FloatingButton
+    );
+};
 
+export default FloatingButton;

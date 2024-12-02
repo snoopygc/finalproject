@@ -12,10 +12,10 @@ const Navbar = () => {
     //const toggleServices = () => setIsServicesOpen(!isServicesOpen) //Removed
 
     return (
-        <nav className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 shadow-lg">
+        <nav className="bg-primary p-4 shadow-lg">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
-                    <Link href="/" className="text-white text-2xl font-bold hover:text-yellow-300 transition duration-300">
+                    <Link href="/" className="text-background text-2xl font-bold hover:text-highlight transition duration-300">
                         PetPet Diary
                     </Link>
                     <div className="hidden md:flex space-x-6">
@@ -27,7 +27,7 @@ const Navbar = () => {
                         <NavLink href="/member">Member</NavLink>
                     </div>
                     <div className="md:hidden">
-                        <button onClick={toggleMenu} className="text-white hover:text-yellow-300 transition duration-300">
+                        <button onClick={toggleMenu} className="text-background hover:text-highlight transition duration-300">
                             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </button>
                     </div>
@@ -50,13 +50,13 @@ const Navbar = () => {
 }
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <Link href={href} className="text-white hover:text-yellow-300 transition duration-300">
+    <Link href={href} className="text-background hover:text-highlight transition duration-300">
         {children}
     </Link>
 )
 
 const MobileNavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <Link href={href} className="text-white hover:text-yellow-300 transition duration-300 block">
+    <Link href={href} className="text-background hover:text-highlight transition duration-300 block">
         {children}
     </Link>
 )

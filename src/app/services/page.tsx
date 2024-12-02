@@ -1,52 +1,181 @@
 'use client'
 
-import { useState } from 'react'
-import { Search, Hospital, Stethoscope, Store, Scissors, GraduationCap, Building, Home } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { AlertCircle } from 'lucide-react'
 
-const services = [
-    { name: 'Hospitals', icon: Hospital, description: 'Emergency and specialized pet care' },
-    { name: 'Clinics', icon: Stethoscope, description: 'Routine check-ups and vaccinations' },
-    { name: 'Pet Shops', icon: Store, description: 'Food, toys, and accessories for your pets' },
-    { name: 'Grooming Salons', icon: Scissors, description: 'Professional pet grooming services' },
-    { name: 'Training Centers', icon: GraduationCap, description: 'Behavior training and obedience classes' },
-    { name: 'Pet-Friendly Hotels', icon: Building, description: 'Accommodations that welcome your furry friends' },
-    { name: 'Pet Boarding Services', icon: Home, description: 'Safe and comfortable pet lodging' },
-]
+// Define the structure for a service
+interface Service {
+    id: string
+    name: string
+    type: string
+    address: string
+    lat: number
+    lng: number
+}
+
+// Define the structure for map centers
+interface MapCenters {
+    [key: string]: { lat: number; lng: number }
+}
+
+// Mock data for services in Bang Phlat and Thawi Watthana
+const services: Record<string, Service[]> = {
+    'Bang Phlat': [
+        { id: '1', name: 'Pet Hospital A', type: 'Hospital', address: '123 Bang Phlat Rd', lat: 13.7934, lng: 100.4851 },
+        { id: '2', name: 'Grooming Salon B', type: 'Grooming', address: '456 Bang Phlat Soi 5', lat: 13.7912, lng: 100.4872 },
+        { id: '3', name: 'Pet Shop C', type: 'Shop', address: '789 Bang Phlat Main St', lat: 13.7956, lng: 100.4890 },
+    ],
+    'Thawi Watthana': [
+        { id: '4', name: 'Vet Clinic D', type: 'Clinic', address: '321 Thawi Watthana Rd', lat: 13.7768, lng: 100.3550 },
+        { id: '5', name: 'Pet-Friendly Hotel E', type: 'Hotel', address: '654 Thawi Watthana Soi 10', lat: 13.7745, lng: 100.3572 },
+        { id: '6', name: 'Training Center F', type: 'Training', address: '987 Thawi Watthana Main St', lat: 13.7790, lng: 100.3595 },
+    ],
+}
+
+const districts = ['Bang Phlat', 'Thawi Watthana'] as const
+type District = typeof districts[number]
+
+const mapCenter: MapCenters = {
+    'Bang Phlat': { lat: 13.7934, lng: 100.4851 },
+    'Thawi Watthana': { lat: 13.7768, lng: 100.3550 },
+}
 
 export default function ServicesPage() {
-    const [searchTerm, setSearchTerm] = useState('')
+    const [selectedDistrict, setSelectedDistrict] = useState<District>('Bang Phlat')
+    const mapRef = useRef<HTMLDivElement>(null)
+    const map = useRef<H.Map | null>(null)
+    const [isMapLoaded, setIsMapLoaded] = useState(false)
+    const [mapError, setMapError] = useState<string | null>(null)
 
-    const filteredServices = services.filter(service =>
-        service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    useEffect(() => {
+        if (!window.H || !mapRef.current || map.current) return
+
+        const initMap = () => {
+            try {
+                // Initialize HERE Map
+                const platform = new H.service.Platform({
+                    apikey: '573CgJzdDc19mqroe7DY3OPsGck51GwFcIWTUAJrrkE'
+                })
+
+                const defaultLayers = platform.createDefaultLayers()
+
+                if (mapRef.current) {
+                    // Create map instance
+                    map.current = new H.Map(
+                        mapRef.current,
+                        defaultLayers.vector.normal.map,
+                        {
+                            center: mapCenter[selectedDistrict],
+                            zoom: 14,
+                            pixelRatio: window.devicePixelRatio || 1
+                        }
+                    )
+
+                    // Enable map interaction (pan, zoom, pinch-to-zoom)
+                    new H.mapevents.Behavior(new H.mapevents.MapEvents(map.current))
+
+                    // Add a resize listener to make sure the map occupies the whole container
+                    window.addEventListener('resize', () => map.current?.getViewPort().resize())
+                    setIsMapLoaded(true)
+                } else {
+                    setMapError('Failed to initialize the map. Map container not found.')
+                }
+            } catch (error) {
+                console.error('Error initializing map:', error)
+                setMapError('Failed to initialize the map. Please check your WebGL support.')
+            }
+        }
+
+        // Attempt to initialize the map after a short delay
+        setTimeout(initMap, 100)
+
+        // Clean up function
+        return () => {
+            if (map.current) {
+                map.current.dispose()
+                map.current = null
+            }
+        }
+    }, [selectedDistrict])
+
+    useEffect(() => {
+        if (!map.current || !isMapLoaded) return
+
+        // Clear existing objects on the map
+        map.current.removeObjects(map.current.getObjects())
+
+        // Add markers for the selected district
+        services[selectedDistrict].forEach(service => {
+            const marker = new H.map.Marker({ lat: service.lat, lng: service.lng })
+            map.current?.addObject(marker)
+        })
+
+        // Set the map's center to the selected district
+        map.current.setCenter(mapCenter[selectedDistrict])
+    }, [selectedDistrict, isMapLoaded])
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-8 text-center">Our Services</h1>
-            <div className="mb-6 relative">
-                <input
-                    type="text"
-                    placeholder="Search services..."
-                    className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Search className="absolute left-3 top-2.5 text-gray-400" size={20} />
+        <div className="container mx-auto p-4">
+            <h1 className="text-3xl font-bold mb-6">Pet Services in Bangkok</h1>
+
+            <div className="mb-4">
+                <Select
+                    onValueChange={(value: string) => setSelectedDistrict(value as District)}
+                    defaultValue={selectedDistrict}
+                >
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {districts.map((district) => (
+                            <SelectItem key={district} value={district}>
+                                {district}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredServices.map((service, index) => (
-                    <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <div className="flex items-center mb-4">
-                            <service.icon className="text-blue-500 mr-3" size={24} />
-                            <h2 className="text-xl font-semibold">{service.name}</h2>
-                        </div>
-                        <p className="text-gray-600">{service.description}</p>
-                    </div>
-                ))}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Map</CardTitle>
+                        <CardDescription>Pet services in {selectedDistrict}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        {mapError ? (
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertTitle>Error</AlertTitle>
+                                <AlertDescription>{mapError}</AlertDescription>
+                            </Alert>
+                        ) : (
+                            <div ref={mapRef} style={{ width: '100%', height: '400px' }} />
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Services List</CardTitle>
+                        <CardDescription>Available pet services in {selectedDistrict}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-2">
+                            {services[selectedDistrict].map((service) => (
+                                <li key={service.id} className="border-b pb-2">
+                                    <h3 className="font-semibold">{service.name}</h3>
+                                    <p className="text-sm text-gray-600">{service.type}</p>
+                                    <p className="text-sm">{service.address}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
             </div>
-            {filteredServices.length === 0 && (
-                <p className="text-center text-gray-500 mt-8">No services found. Please try a different search term.</p>
-            )}
         </div>
     )
 }
