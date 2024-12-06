@@ -3,83 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Matching Game</title>
+    <title>Animal Matching</title>
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Slackey Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Verdana', sans-serif;
-            background-color: #f7f4f3;
-            color: #333;
-            text-align: center;
+            font-family: 'Slackey', cursive;
+            background-color: #F5F4B3;
+            color: #F5F4B3;
             margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #ff4d6d;
-            font-size: 36px;
-        }
-
-        .input-container {
-            margin: 20px auto;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .container {
+            background: #859F3D;
+            border: 4px solid #31511E;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #F5F4B3;
+            text-shadow: 2px 2px #31511E;
+            margin-bottom: 20px;
+            font-family: 'Slackey', cursive;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            font-family: 'Slackey', cursive;
         }
 
         #playerName {
-            padding: 10px;
-            font-size: 18px;
-            border-radius: 8px;
-            border: 2px solid #ff4d6d;
+            padding: 10px 15px;
+            font-size: 1rem;
+            font-family: 'Slackey', cursive;
+            border-radius: 15px;
+            border: 2px solid #31511E;
             outline: none;
-            width: 250px;
-            transition: border-color 0.3s;
+            width: 80%;
+            text-align: center;
+            transition: box-shadow 0.3s;
         }
 
         #playerName:focus {
-            border-color: #ff6f91;
+            box-shadow: 0 0 8px #F5F4B3;
         }
 
         #startGameBtn {
             padding: 10px 20px;
-            font-size: 18px;
-            background-color: #ff4d6d;
-            color: #fff;
+            font-size: 1rem;
+            font-family: 'Slackey', cursive;
+            color: white;
+            background: linear-gradient(45deg, #F5F4B3, #31511E);
             border: none;
-            border-radius: 8px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            margin-top: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         #startGameBtn:hover {
-            background-color: #ff6f91;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
         .game-info {
+            margin: 20px 0;
+            font-size: 1.2rem;
             display: flex;
             justify-content: space-between;
-            margin: 20px auto;
-            max-width: 600px;
-            font-size: 24px;
         }
 
         .game-board {
             display: grid;
-            grid-template-columns: repeat(4, 120px);
+            grid-template-columns: repeat(4, 100px);
             grid-gap: 15px;
             justify-content: center;
-            margin: 20px auto;
+            margin: 20px 0;
         }
 
         .card {
-            width: 120px;
-            height: 120px;
-            background-color: #ffc947;
+            width: 100px;
+            height: 100px;
+            background-color: #FFFECB;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             cursor: pointer;
@@ -87,69 +114,74 @@
             align-items: center;
             justify-content: center;
             font-size: 48px;
+            font-family: 'Slackey', cursive;
             transition: transform 0.2s, background-color 0.3s;
         }
 
         .card:hover {
             transform: scale(1.05);
-            background-color: #ff5c8a;
+            background-color: #F5F4B3;
         }
 
         .card.flipped {
-            background-color: #6a0572;
+            background-color: #31511E;
             color: #fff;
         }
     </style>
 </head>
 <body>
-    <h1>Animal Matching Game</h1>
-    <div class="input-container">
-        <input type="text" id="playerName" placeholder="Enter your name">
-        <button id="startGameBtn">Start Game</button>
+    <div class="container">
+        <h1>Animal Matching 👾</h1>
+        <div id="inputSection" class="input-container">
+            <input type="text" id="playerName" placeholder="Enter your name">
+            <button id="startGameBtn">Start Game</button>
+        </div>
+        <div id="gameSection" style="display: none;">
+            <div class="game-info">
+                <p id="scoreBoard">Score: 0</p>
+                <p id="timer">Time left: 60s</p>
+            </div>
+            <div class="game-board" id="gameBoard"></div>
+        </div>
     </div>
-    <div class="game-info">
-        <div id="scoreBoard">Score: 0</div>
-        <div id="timer">Time left: 60s</div>
-    </div>
-    <div class="game-board" id="gameBoard"></div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             let playerName = '';
             let score = 0;
             let timeLeft = 60;
             let timerInterval;
+            const inputSection = document.getElementById('inputSection');
+            const gameSection = document.getElementById('gameSection');
             const scoreBoard = document.getElementById('scoreBoard');
             const timer = document.getElementById('timer');
             const startGameBtn = document.getElementById('startGameBtn');
             const gameBoard = document.getElementById('gameBoard');
-
             const cardsArray = [
-                { name: 'dog', img: '🐶' },
-                { name: 'cat', img: '🐱' },
-                { name: 'rabbit', img: '🐰' },
-                { name: 'hamster', img: '🐹' },
-                { name: 'lion', img: '🦁' },
-                { name: 'panda', img: '🐼' },
-                { name: 'frog', img: '🐸' },
-                { name: 'koala', img: '🐨' },
-                { name: 'dog', img: '🐶' },
-                { name: 'cat', img: '🐱' },
-                { name: 'rabbit', img: '🐰' },
-                { name: 'hamster', img: '🐹' },
-                { name: 'lion', img: '🦁' },
-                { name: 'panda', img: '🐼' },
-                { name: 'frog', img: '🐸' },
-                { name: 'koala', img: '🐨' }
+                { name: 'dog', img: '🐶' }, { name: 'cat', img: '🐱' },
+                { name: 'rabbit', img: '🐰' }, { name: 'hamster', img: '🐹' },
+                { name: 'lion', img: '🦁' }, { name: 'panda', img: '🐼' },
+                { name: 'frog', img: '🐸' }, { name: 'koala', img: '🐨' },
+                { name: 'dog', img: '🐶' }, { name: 'cat', img: '🐱' },
+                { name: 'rabbit', img: '🐰' }, { name: 'hamster', img: '🐹' },
+                { name: 'lion', img: '🦁' }, { name: 'panda', img: '🐼' },
+                { name: 'frog', img: '🐸' }, { name: 'koala', img: '🐨' }
             ];
 
             startGameBtn.addEventListener('click', () => {
-                playerName = document.getElementById('playerName').value;
-                if (playerName.trim() === '') {
-                    alert('Please enter your name to start the game');
-                    return;
+                playerName = document.getElementById('playerName').value.trim();
+                if (!playerName) {
+                    Swal.fire({
+                        title: 'Oops!',
+                        text: 'Please enter your name to start the game.',
+                        icon: 'warning',
+                        confirmButtonColor: '#ff4d6d',
+                    });
+                } else {
+                    inputSection.style.display = 'none';
+                    gameSection.style.display = 'block';
+                    startGame();
                 }
-                startGame();
             });
 
             function startGame() {
@@ -158,7 +190,6 @@
                 scoreBoard.textContent = `Score: ${score}`;
                 timer.textContent = `Time left: ${timeLeft}s`;
                 gameBoard.innerHTML = '';
-                matchedCards = [];
                 cardsArray.sort(() => 0.5 - Math.random());
                 createBoard();
                 clearInterval(timerInterval);
@@ -215,7 +246,12 @@
 
                 if (matchedCards.length === cardsArray.length / 2) {
                     clearInterval(timerInterval);
-                    setTimeout(showFinalScore, 500);
+                    Swal.fire({
+                        title: `🎉 Well done, ${playerName}!`,
+                        text: `Your score is ${score}`,
+                        icon: 'success',
+                        confirmButtonColor: '#ff4d6d'
+                    }).then(resetGame);
                 }
             }
 
@@ -226,30 +262,17 @@
                     clearInterval(timerInterval);
                     Swal.fire({
                         title: `⏳ Time's up, ${playerName}!`,
-                        text: `Your final score is: ${score}`,
+                        text: `Your final score is ${score}`,
                         icon: 'info',
-                        confirmButtonText: 'Try again',
-                        confirmButtonColor: '#ff4d6d'
-                    });
-                    document.querySelectorAll('.card').forEach(card => {
-                        card.removeEventListener('click', flipCard);
-                    });
+                        confirmButtonColor: '#ff4d6d',
+                    }).then(resetGame);
                 }
             }
 
-            function showFinalScore() {
-                let bonusScore = timeLeft > 20 ? 50 : 0;
-                score += bonusScore;
-                Swal.fire({
-                    title: `🎉 Congratulations, ${playerName}!`,
-                    html: `
-                        <p>Your final score is: <strong>${score}</strong></p>
-                        ${bonusScore > 0 ? `<p style="color: #ff4d6d;">Bonus points: +${bonusScore}</p>` : '<p>No bonus points</p>'}
-                    `,
-                    icon: 'success',
-                    confirmButtonText: 'Awesome!',
-                    confirmButtonColor: '#ff4d6d'
-                });
+            function resetGame() {
+                gameSection.style.display = 'none';
+                inputSection.style.display = 'block';
+                document.getElementById('playerName').value = '';
             }
         });
     </script>

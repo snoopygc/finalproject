@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Whack-a-Dog Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Slackey&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #f8e8c8;
-            /* Soft light brown background */
-            font-family: Arial, sans-serif;
+            font-family: 'Slackey', cursive;
             margin: 0;
             padding: 0;
             display: flex;
@@ -27,7 +29,6 @@
             max-width: 600px;
             justify-items: center;
             background-color: #d2a27d;
-            /* Light brown grid background */
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -37,12 +38,10 @@
             width: 100px;
             height: 100px;
             background-color: #855e42;
-            /* Darker brown for the hole */
             border-radius: 50%;
             position: relative;
             overflow: hidden;
             font-size: 40px;
-            /* Make emoji big */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -51,17 +50,17 @@
 
         .score-board {
             font-size: 24px;
+            font-family: 'Slackey', cursive;
             color: #4b2f2a;
-            /* Dark brown text */
             text-align: center;
             margin-bottom: 20px;
         }
 
         .start-button {
             background-color: #c77a56;
-            /* Warm brown for button */
             color: white;
             font-size: 18px;
+            font-family: 'Slackey', cursive;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -72,20 +71,39 @@
             background-color: #9d5d42;
         }
 
-        .input-section {
+        .input-section-container {
             margin-bottom: 20px;
             text-align: center;
+            background-color: #f4e3d3;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-header {
+            font-family: 'Slackey', cursive;
+            font-size: 28px;
+            color: #4b2f2a;
+            margin-bottom: 10px;
+        }
+
+        .input-section label {
+            font-family: 'Slackey', cursive;
+            font-size: 20px;
         }
 
         .input-section input {
             padding: 10px;
             font-size: 16px;
+            font-family: 'Slackey', cursive;
+            text-align: center;
             border-radius: 5px;
             border: 1px solid #ddd;
         }
 
         .game-over {
             font-size: 28px;
+            font-family: 'Slackey', cursive;
             color: red;
             font-weight: bold;
             text-align: center;
@@ -94,6 +112,7 @@
 
         .missed {
             font-size: 30px;
+            font-family: 'Slackey', cursive;
             color: red;
             display: flex;
             justify-content: center;
@@ -105,10 +124,13 @@
 
 <body>
 
-    <div class="input-section">
-        <label for="playerName">Enter your name: </label>
-        <input type="text" id="playerName" placeholder="Your Name">
-        <button class="start-button" id="startButton">Start Game</button>
+    <div class="input-section-container">
+        <div class="game-header">Whack-a-Dog Game</div>
+        <div class="input-section">
+            <label for="playerName">Enter your name: </label>
+            <input type="text" id="playerName" placeholder="Your Name">
+            <button class="start-button" id="startButton">Start Game</button>
+        </div>
     </div>
 
     <div class="score-board">
@@ -143,14 +165,12 @@
         let score = 0;
         let misses = 0;
         let gameActive = false;
-        let dogSpeed = 1500; // Initial speed for the dogs to appear
+        let dogSpeed = 1500;
         let playerName = '';
-        let missedEmojis = []; // Array to track missed dog emojis
+        let missedEmojis = [];
 
-        // Dog emojis
         const dogEmojis = ['🦮', '🐩', '🐕‍🦺'];
 
-        // Function to start the game
         function startGame() {
             playerName = playerNameInput.value.trim();
             if (playerName === '') {
@@ -163,66 +183,57 @@
             missedEmojis = [];
             scoreDisplay.textContent = score;
             missesDisplay.textContent = misses;
-            missedEmojisDisplay.innerHTML = ''; // Clear missed emojis
+            missedEmojisDisplay.innerHTML = '';
             gameActive = true;
             startButton.textContent = "Game Running";
-            startButton.disabled = true;  // Disable button after game starts
-            showDog();  // Start showing dogs
-            gameOverMessage.style.display = 'none';  // Hide game over message
+            startButton.disabled = true;
+            showDog();
+            gameOverMessage.style.display = 'none';
         }
 
-        // Function to show a dog in a random hole
         function showDog() {
-            if (!gameActive) return; // หยุดฟังก์ชันหากเกมจบแล้ว
+            if (!gameActive) return;
 
             const randomHoleIndex = Math.floor(Math.random() * holes.length);
             const randomHole = holes[randomHoleIndex];
-
-            // Randomly pick a dog emoji
             const dogEmoji = dogEmojis[Math.floor(Math.random() * dogEmojis.length)];
             randomHole.textContent = dogEmoji;
 
-            // After a set time, if the player hasn't clicked, count as a miss
             setTimeout(() => {
-                if (!gameActive) return; // หยุดถ้าเกมจบแล้ว
+                if (!gameActive) return;
                 if (randomHole.textContent === dogEmoji) {
                     misses++;
                     missesDisplay.textContent = misses;
-                    missedEmojis.push(dogEmoji); // Add missed emoji to the list
+                    missedEmojis.push(dogEmoji);
                     updateMissedEmojis();
-                    randomHole.textContent = ''; // Remove the dog after the timeout
+                    randomHole.textContent = '';
                     if (misses > 2) {
-                        endGame(); // End game if 3 misses occur
-                        return; // ออกจากฟังก์ชันทันทีเมื่อเกมจบ
+                        endGame();
+                        return;
                     }
                 }
             }, dogSpeed);
 
-            // Speed up the dog appearance once the score is above 10
             if (score > 10) {
-                dogSpeed = 1000; // Speed up after score > 10
+                dogSpeed = 1000;
             }
 
             if (gameActive) {
-                setTimeout(showDog, dogSpeed); // Repeat at the set speed
+                setTimeout(showDog, dogSpeed);
             }
         }
 
-
-        // Update missed emojis display
         function updateMissedEmojis() {
             missedEmojisDisplay.innerHTML = missedEmojis.map(emoji => `<span style="font-size: 40px;">❌ ${emoji}</span>`).join(' ');
         }
 
-        // Handle clicks on the holes
         holes.forEach(hole => {
             hole.addEventListener('click', () => {
                 if (hole.textContent === '' || gameOverMessage.style.display === 'block') {
-                    return; // Do nothing if there's no dog or game over
+                    return;
                 }
 
                 if (hole.textContent !== '') {
-                    // Score and remove the dog emoji
                     score++;
                     scoreDisplay.textContent = score;
                     hole.textContent = '';
@@ -230,15 +241,13 @@
             });
         });
 
-        // End the game when 3 misses occur
         function endGame() {
             gameActive = false;
             gameOverMessage.style.display = 'block';
             startButton.textContent = "Game Over! Restart";
-            startButton.disabled = false;  // Allow to restart
+            startButton.disabled = false;
         }
 
-        // Start the game when the start button is clicked
         startButton.addEventListener('click', startGame);
     </script>
 
